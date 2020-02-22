@@ -63,8 +63,8 @@ namespace Checkers {
 
             for (int y = 0; y < 8; y++) {
                 for (int x = 0; x < 8; x++) {
-                    if (game.Tiles[y, x].IsContainsChecker) {
-                        field[y, x].BackgroundImage = Images.whitechecker;
+                    if (game.Tiles[x, y].IsContainsChecker) {
+                        field[x, y].BackgroundImage = game.Tiles[x, y].Checker.Image;
                     }
                 }
             }
@@ -98,7 +98,7 @@ namespace Checkers {
             for (int y = 0; y < 8; y++) {
                 for (int x = 0; x < 8; x++) {
                     if (game.Tiles[x, y].IsContainsChecker) {
-                        field[x, y].BackgroundImage = Images.whitechecker;
+                        field[x, y].BackgroundImage = game.Tiles[x, y].Checker.Image;
                         if (y % 2 == 0) {
                             field[y, 0].BackColor = Color.LightPink;
                             field[y, 1].BackColor = Color.Black;

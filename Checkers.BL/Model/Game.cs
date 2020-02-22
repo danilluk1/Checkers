@@ -7,6 +7,7 @@ namespace Checkers.BL.Model {
         #region constansts
         public const int FIELD_WIDTH = 8;
         public const int FIELD_HEIGHT = 8;
+        public const int MIN_CORD_VALUE = 0;
         #endregion
 
         #region private variables
@@ -40,11 +41,14 @@ namespace Checkers.BL.Model {
         #region Class designer
         public Game(Team ft, Team st) {
 
+            //Инициализация команд.
             firstTeam = ft ?? throw new ArgumentNullException(nameof(ft));
             secondTeam = st ?? throw new ArgumentNullException(nameof(st));
 
+            //Инициализация поля.
             tiles = new Tile[FIELD_HEIGHT, FIELD_WIDTH];
 
+            //Заполняем поле.
             for(int y = 0; y < FIELD_HEIGHT; y++) {
                 for (int x = 0; x < FIELD_WIDTH; x++) {
                     tiles[x, y] = new Tile();
@@ -92,12 +96,17 @@ namespace Checkers.BL.Model {
         public void Move(Checker checker, int row, int column) {
             //Проверям условие, так как иначе нет смысла выполнять эту функцию.
             if (row < FIELD_HEIGHT && column < FIELD_WIDTH) {
+
                 //Проверяем шашку на null
                 if (checker == null) return;
-                //TODO необходимо проверять возможность хода.
+
+                //Проверяем возможность хода
+                if (!IsCheckerAbleToMove(checker, row, column)) return;
+
                 //Так как ход уже совешен, мы можем установить текущей клетке поле ContainsChecker = false
-                //TODO возможно понадобится tiles.[row, column0].Checker = null;
+                //TODO возможно понадобится tiles.[row, column].Checker = null;
                 tiles[checker.Row, checker.Column].IsContainsChecker = false;
+                tiles[checker.Row, checker.Column].Checker = null;
 
 
                 //Устанавливаем шашке, новое положение на поле.
@@ -105,10 +114,10 @@ namespace Checkers.BL.Model {
                 checker.Row = row;
 
                 //Устанавливаем в клетку, в которую совершается ход нашу шашку.
-                tiles[row, column].Checker = checker;
+                tiles[row, column].Checker = (Checker)checker.Clone();
 
                 //После хода автоматически выбираем нашу шашку
-                selectedChecker = checker;
+                selectedChecker = tiles[row, column].Checker;
 
                 //Пробрасываем событие изменения поля
                 FieldUpdated?.Invoke();
@@ -117,17 +126,43 @@ namespace Checkers.BL.Model {
         #endregion
 
         #region Movement ables algoritm
+
         /*TODO
          * Алгоритм проверки возможность хода
          * Принимаем шашку, возвращаем возможность хода
+         * Необходимо проверять ход на срубы, + возможности дамки.
          */
-        private bool IsAbleToMove(Checker checker) {
-            for(int y = 0; y < FIELD_HEIGHT; y++) {
+        private bool IsCheckerAbleToMove(Checker checker, int row, int column) {
+
+            /*
+             * Проверяем, чтобы координаты нашего кода не выходили за пределы поля.
+             * Если она выходит за пределы, то нет смысла выполнять метод.
+            */
+            if (row > FIELD_WIDTH |
+                row < MIN_CORD_VALUE |
+                column < MIN_CORD_VALUE |
+                column > FIELD_HEIGHT)
+                return false;
+
+            /* 
+             * Если клетка, в которую совершается ход уже занята возвращаем false. 
+             * Можно не производить дальнейшие вычисления.
+             */
+            if (tiles[row, column].IsContainsChecker)
+                return false;
+
+            //Проверяем, чтобы при обычном ходе была возможность сходить только на 1 по диагонали.
+            if (Math.Abs(checker.Column - column) == 1 &&
+                Math.Abs(checker.Row - row) == 1)  
+                return true;
+
+            //Цикл пригодится при реализации атак.
+            for (int y = 0; y < FIELD_HEIGHT; y++) {
                 for(int x = 0; x < FIELD_WIDTH; x++) {
 
                 }
             }
-            return true;
+            return false;
         }
         #endregion
 

@@ -16,8 +16,7 @@ namespace Checkers.BL.Model {
             } 
             set {
                 checker = value;
-                IsContainsChecker = true;
-               
+                IsContainsChecker = checker == null ? false : true;               
             }
         }
 

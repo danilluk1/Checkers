@@ -63,6 +63,16 @@ namespace Checkers {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap blackchecker {
+            get {
+                object obj = ResourceManager.GetObject("blackchecker", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap blackkrug {
             get {
                 object obj = ResourceManager.GetObject("blackkrug", resourceCulture);

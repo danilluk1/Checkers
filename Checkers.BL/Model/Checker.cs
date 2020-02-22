@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 
 namespace Checkers.BL.Model {
@@ -8,7 +9,7 @@ namespace Checkers.BL.Model {
         Black
     }
 
-    public sealed class Checker {
+    public sealed class Checker : ICloneable {
 
         #region private variables
         private CheckerType c_type;
@@ -54,13 +55,8 @@ namespace Checkers.BL.Model {
             Row = row;
             Column = column;
 
-            if(type == CheckerType.White) {
-                image = Images.whitechecker;
-            }
+            image = type == CheckerType.White ? Images.whitechecker : Images.blackchecker;
 
-            if(type == CheckerType.Black) {
-                image = Images.whitechecker; //Change to black color //TODO
-            }
         }
         #endregion
 
@@ -68,5 +64,8 @@ namespace Checkers.BL.Model {
             return ((Checker)obj).column == this.column && ((Checker)obj).row == this.row;
         }
 
+        public object Clone() {
+            return this.MemberwiseClone();
+        }
     }
 }
