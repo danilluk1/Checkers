@@ -16,6 +16,7 @@ namespace Checkers.BL.Model {
         private int row;
         private int column;
         private bool isSelected;
+        private bool isKing;
         private readonly Image image;
         #endregion
 
@@ -46,6 +47,15 @@ namespace Checkers.BL.Model {
                 column = value;
             }
         }
+
+        public bool IsKing {
+            get {
+                return isKing;
+            }
+            set {
+                isKing = value;
+            }
+        }
         #endregion
 
         #region Class Designer
@@ -54,6 +64,7 @@ namespace Checkers.BL.Model {
             c_type = type;
             Row = row;
             Column = column;
+            isKing = false;
 
             image = type == CheckerType.White ? Images.whitechecker : Images.blackchecker;
 

@@ -125,7 +125,11 @@ namespace Checkers {
                     }
                 }
             }
-            field[game.SelectedChecker.Row, game.SelectedChecker.Column].BackColor = Color.Yellow;
+            if (game.SelectedChecker != null) {
+                if (game.Tiles[game.SelectedChecker.Row, game.SelectedChecker.Column].Checker.Equals(game.SelectedChecker)) {
+                    field[game.SelectedChecker.Row, game.SelectedChecker.Column].BackColor = Color.Yellow;
+                }
+            }
         }
     }
 }
