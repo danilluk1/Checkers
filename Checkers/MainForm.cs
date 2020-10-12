@@ -30,31 +30,27 @@ namespace Checkers {
                     };
                     field[y, x].MouseDown += Tile_Click;
                     field[y, x].MouseDoubleClick += Tile_MouseDoubleClick;
-                }
-            }
-            for(int y = 0; y < Game.FIELD_HEIGHT; y++) {
-                for(int x = 0; x < Game.FIELD_WIDTH; x++) {
-                    if (y % 2 == 0) {
-                        field[y, 0].BackColor = Color.LightPink;
-                        field[y, 1].BackColor = Color.Black;
-                        field[y, 2].BackColor = Color.LightPink;
-                        field[y, 3].BackColor = Color.Black;
-                        field[y, 4].BackColor = Color.LightPink;
-                        field[y, 5].BackColor = Color.Black;
-                        field[y, 6].BackColor = Color.LightPink;
-                        field[y, 7].BackColor = Color.Black;
-                    }
-                    else {
-                        field[y, 0].BackColor = Color.Black;
-                        field[y, 1].BackColor = Color.LightPink;
-                        field[y, 2].BackColor = Color.Black;
-                        field[y, 3].BackColor = Color.LightPink;
-                        field[y, 4].BackColor = Color.Black;
-                        field[y, 5].BackColor = Color.LightPink;
-                        field[y, 6].BackColor = Color.Black;
-                        field[y, 7].BackColor = Color.LightPink;
-                    }
                     Controls.Add(field[y, x]);
+                }
+                if (y % 2 == 0) {
+                    field[y, 0].BackColor = Color.LightPink;
+                    field[y, 1].BackColor = Color.Black;
+                    field[y, 2].BackColor = Color.LightPink;
+                    field[y, 3].BackColor = Color.Black;
+                    field[y, 4].BackColor = Color.LightPink;
+                    field[y, 5].BackColor = Color.Black;
+                    field[y, 6].BackColor = Color.LightPink;
+                    field[y, 7].BackColor = Color.Black;
+                }
+                else {
+                    field[y, 0].BackColor = Color.Black;
+                    field[y, 1].BackColor = Color.LightPink;
+                    field[y, 2].BackColor = Color.Black;
+                    field[y, 3].BackColor = Color.LightPink;
+                    field[y, 4].BackColor = Color.Black;
+                    field[y, 5].BackColor = Color.LightPink;
+                    field[y, 6].BackColor = Color.Black;
+                    field[y, 7].BackColor = Color.LightPink;
                 }
             }
             #endregion

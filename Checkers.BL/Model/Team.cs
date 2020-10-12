@@ -8,6 +8,7 @@ namespace Checkers.BL.Model {
     public sealed class Team {
         private string _name;
         private int totalPoint;
+        public bool IsNeedToAttack { get; set; }
 
 
         public Team(string name) {
