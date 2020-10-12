@@ -70,7 +70,45 @@ namespace Checkers.BL.Model {
                     if (direction == MovesDirection.TopLeft || direction == MovesDirection.TopRight)
                         return true;
                 }
-            }           
+            }
+            if (Math.Abs(Column - column) == Game.ATTACK_DEFAULT_STEP &&
+                     Math.Abs(Row - row) == Game.ATTACK_DEFAULT_STEP) {
+                int c;
+                int r;
+                switch (direction) {
+                    case MovesDirection.DownLeft:
+                    r = Row + 1;
+                    c = Column - 1;
+                    if (Field[r, c].IsContainsChecker && Field[r, c].Checker.Color != Color) {
+                        return true;
+                    }
+                    break;
+
+                    case MovesDirection.DownRight:
+                    r = Row + 1;
+                    c = Column + 1;
+                    if (Field[r, c].IsContainsChecker && Field[r, c].Checker.Color != Color) {
+                        return true;
+                    }
+                    break;
+
+                    case MovesDirection.TopLeft:
+                    r = Row - 1;
+                    c = Column - 1;
+                    if (Field[r, c].IsContainsChecker && Field[r, c].Checker.Color != Color) {
+                        return true;
+                    }
+                    break;
+
+                    case MovesDirection.TopRight:
+                    r = Row - 1;
+                    c = Column + 1;
+                    if (Field[r, c].IsContainsChecker && Field[r, c].Checker.Color != Color) {
+                        return true;
+                    }
+                    break;
+                }
+            }
 
             return false;
         }
