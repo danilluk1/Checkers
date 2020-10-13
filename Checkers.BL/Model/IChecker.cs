@@ -30,7 +30,9 @@ namespace Checkers.BL.Model {
 
         MovesType CountMoveType(int row, int column);
 
-        bool TryToMove(int row, int column);
+        MovesType TryToMove(int row, int column);
+
+        bool CanEat();
 
 
     }

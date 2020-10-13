@@ -56,11 +56,12 @@ namespace Checkers.BL.Model {
             if (Field[row, column].IsContainsChecker)
                 return false;
 
+            if (IsMustAttack() && !this.CanEat()) 
+                return false;
+
             //Проверяем, чтобы при обычном ходе была возможность сходить только на 1 по диагонали.
             if (Math.Abs(Column - column) == Game.DEFAULT_STEP &&
-                Math.Abs(Row - row) == Game.DEFAULT_STEP)
-                //&& !IsCheckerNeedToAttack(CheckerType.White)) 
-                {
+                Math.Abs(Row - row) == Game.DEFAULT_STEP){
                 //Проверяем чтобы шашки могли двигаться только вперед при обычном ходе
                 if (Color == CheckerColor.Black) {
                     if (direction == MovesDirection.DownLeft || direction == MovesDirection.DownRight)
@@ -131,9 +132,11 @@ namespace Checkers.BL.Model {
         }
 
         public MovesType CountMoveType(int row, int column) {
+
             var direction = CountMoveDirection(row, column);
             if (Math.Abs(Column - column) == Game.DEFAULT_STEP &&
                 Math.Abs(Row - row) == Game.DEFAULT_STEP){
+
                 //Проверяем чтобы шашки могли двигаться только вперед при обычном ходе
                 if (Color == CheckerColor.Black) {
                     if (direction == MovesDirection.DownLeft || direction == MovesDirection.DownRight)
@@ -193,7 +196,7 @@ namespace Checkers.BL.Model {
             return MovesType.None;
         }
 
-        public bool TryToMove(int row, int column) {
+        public MovesType TryToMove(int row, int column) {
             //Проверям условие, так как иначе нет смысла выполнять эту функцию.
             if (row < Game.FIELD_HEIGHT && column < Game.FIELD_WIDTH) {           
 
@@ -204,11 +207,12 @@ namespace Checkers.BL.Model {
                 //Если ход невозможен возращаемся.
                 var result = IsCheckerAbleToMove(row, column, direction);
                 var moveType = CountMoveType(row, column);
-                if (!result) return false;
+                if (!result) return MovesType.None;
 
                 if (moveType == MovesType.Attack) {
-                    var c = 0;
-                    var r = 0;
+                    int c;
+                    int r;
+
                     switch (direction) {
                         case MovesDirection.DownLeft:
                         r = Row + 1;
@@ -230,8 +234,8 @@ namespace Checkers.BL.Model {
                         c = Column + 1;
                         break;
                         default:
-                        return false;
-                    }                   
+                        return MovesType.None;
+                    }
                     Field[r, c].Checker = null;
                     Checkers.ToList().Remove(Field[r, c].Checker);
                 }
@@ -250,7 +254,66 @@ namespace Checkers.BL.Model {
                 //Устанавливаем в клетку, в которую совершается ход нашу шашку.
                 Field[row, column].Checker = (Checker)this.Clone();
 
-                return true;
+                return moveType;
+            }
+            return MovesType.None;
+        }
+        /*
+         * Проходим от положения шашки циклом в 4 стороны и смотрим, существует ли взоможность съесть
+         * */
+        public bool CanEat() {
+
+            try {
+                if (Color == CheckerColor.White) {
+                    if (Row + 1 < 8 && Row + 2 < 8 && Row - 1 >= 0 && Row - 2 >= 0) {
+                        if (Column + 1 < 8 && Column + 2 < 8 && Column - 1 >= 0 && Column - 2 >= 0) {
+                            if (Field[Row + 1, Column + 1].IsContainsChecker && Field[Row + 1, Column + 1].Checker.Color != Color && !Field[Row + 2, Column + 2].IsContainsChecker) {
+                                return true;
+                            }
+                            else if (Field[Row - 1, Column + 1].IsContainsChecker && Field[Row - 1, Column + 1].Checker.Color != Color && !Field[Row - 2, Column + 2].IsContainsChecker) {
+                                return true;
+                            }
+                            else if (Field[Row + 1, Column - 1].IsContainsChecker && Field[Row + 1, Column - 1].Checker.Color != Color && !Field[Row + 2, Column - 2].IsContainsChecker) {
+                                return true;
+                            }
+                            else if (Field[Row - 1, Column - 1].IsContainsChecker && Field[Row - 1, Column - 1].Checker.Color != Color && !Field[Row - 2, Column - 2].IsContainsChecker) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                else if (Color == CheckerColor.Black) {
+                    if (Row + 1 < 8 && Row + 2 < 8 && Row - 1 >= 0 && Row - 2 >= 0) {
+                        if (Column + 1 < 8 && Column + 2 < 8 && Column - 1 >= 0 && Column - 2 >= 0) {
+                            if (Field[Row + 1, Column + 1].IsContainsChecker && Field[Row + 1, Column + 1].Checker.Color != Color && !Field[Row + 2, Column + 2].IsContainsChecker) {
+                                return true;
+                            }
+                            else if (Field[Row - 1, Column + 1].IsContainsChecker && Field[Row - 1, Column + 1].Checker.Color != Color && !Field[Row - 2, Column + 2].IsContainsChecker) {
+                                return true;
+                            }
+                            else if (Field[Row + 1, Column - 1].IsContainsChecker && Field[Row + 1, Column - 1].Checker.Color != Color && !Field[Row + 2, Column - 2].IsContainsChecker) {
+                                return true;
+                            }
+                            else if (Field[Row - 1, Column - 1].IsContainsChecker && Field[Row - 1, Column - 1].Checker.Color != Color && !Field[Row - 2, Column - 2].IsContainsChecker) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+            catch (IndexOutOfRangeException) {
+                return false;
+            }
+            return false;
+        }
+
+        public bool IsMustAttack() {
+            foreach(IChecker checker in Checkers) {
+                if (checker.CanEat()) {
+                    return true;
+                }
             }
             return false;
         }
