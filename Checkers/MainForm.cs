@@ -59,8 +59,8 @@ namespace Checkers {
 
             for (int y = 0; y < 8; y++) {
                 for (int x = 0; x < 8; x++) {
-                    if (game.Tiles[x, y].IsContainsChecker) {
-                        field[x, y].BackgroundImage = game.Tiles[x, y].Checker.Image;
+                    if (game.Board.Tiles[x, y].IsContainsChecker) {
+                        field[x, y].BackgroundImage = game.Board.Tiles[x, y].Checker.Image;
                     }
                 }
             }
@@ -69,32 +69,38 @@ namespace Checkers {
 
 
         private void Tile_MouseDoubleClick(object sender, MouseEventArgs e) {
-            string cords = (sender as PictureBox).Tag.ToString();
-
-            int row = Convert.ToInt32(cords[0].ToString());
-            int column = Convert.ToInt32(cords[1].ToString());
-            game.Move(game.SelectedChecker, row, column);
         }
 
 
         private void Tile_Click(object sender, MouseEventArgs e) {
-            if (e.Button == MouseButtons.Right) {
+            if (e.Button == MouseButtons.Left) {
+                if (game.SelectedChecker == null) {
+                    string cords = (sender as PictureBox).Tag.ToString();
+                    int row = Convert.ToInt32(cords[0].ToString());
+                    int column = Convert.ToInt32(cords[1].ToString());
 
-                string cords = (sender as PictureBox).Tag.ToString();
-                int row = Convert.ToInt32(cords[0].ToString());
-                int column = Convert.ToInt32(cords[1].ToString());
+                    game.SelectedChecker = game.Board.Tiles[row, column].Checker;
 
-                game.SelectedChecker = game.Tiles[row, column].Checker;
+                    UpdateView();
+                    ShowVariants(game.SelectedChecker);
+                }
+                else {
+                    string cords = (sender as PictureBox).Tag.ToString();
 
-                UpdateView();
+                    int row = Convert.ToInt32(cords[0].ToString());
+                    int column = Convert.ToInt32(cords[1].ToString());
+                    game.Move(game.SelectedChecker, row, column);
+                    ShowVariants(game.SelectedChecker);
+                    game.SelectedChecker = null;
+                }
             }
 
         }
         private void UpdateView() {
             for (int y = 0; y < 8; y++) {
                 for (int x = 0; x < 8; x++) {
-                    if (game.Tiles[x, y].IsContainsChecker) {
-                        field[x, y].BackgroundImage = game.Tiles[x, y].Checker.Image;
+                    if (game.Board.Tiles[x, y].IsContainsChecker) {
+                        field[x, y].BackgroundImage = game.Board.Tiles[x, y].Checker.Image;
                         if (y % 2 == 0) {
                             field[y, 0].BackColor = Color.LightPink;
                             field[y, 1].BackColor = Color.Black;
@@ -122,8 +128,20 @@ namespace Checkers {
                 }
             }
             if (game.SelectedChecker != null) {
-                if (game.Tiles[game.SelectedChecker.Row, game.SelectedChecker.Column].Checker.Equals(game.SelectedChecker)) {
+                if(game.Board[game.SelectedChecker.Row, game.SelectedChecker.Column].Checker != null)
+                if (game.Board[game.SelectedChecker.Row, game.SelectedChecker.Column].Checker.Equals(game.SelectedChecker)) {
                     field[game.SelectedChecker.Row, game.SelectedChecker.Column].BackColor = Color.Yellow;
+                }
+            }
+        }
+
+        private void ShowVariants(Checker checker) {
+            List<Tile> tiles = game.SelectedChecker?.CountCheckerAbleTiles();
+            if (tiles != null) {
+                for (int i = 0; i < tiles.Count; i++) {
+                    if (checker.Color == game.CurrentStepColor) {
+                        field[tiles[i].Row, tiles[i].Column].BackColor = Color.Red;
+                    }
                 }
             }
         }

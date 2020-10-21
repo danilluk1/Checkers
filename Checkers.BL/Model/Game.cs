@@ -38,9 +38,9 @@ namespace Checkers.BL.Model {
         #endregion private variables
 
         #region public properties
-        public CheckerColor CurrentStepColor { get; set; } = CheckerColor.White;
 
-        public Tile[,] Tiles { get; }
+        public Board Board { get; set; }
+        public CheckerColor CurrentStepColor { get; set; } = CheckerColor.White;
 
         public Checker SelectedChecker { get; set; }
         public List<Checker> WhiteCheckers { get; set; } = new List<Checker>();
@@ -62,55 +62,7 @@ namespace Checkers.BL.Model {
             secondTeam = st ?? throw new ArgumentNullException(nameof(st));
 
             //Инициализация поля.
-            Tiles = new Tile[FIELD_HEIGHT, FIELD_WIDTH];
-
-            //Заполняем поле.
-            for (int y = 0; y < FIELD_HEIGHT; y++) {
-                for (int x = 0; x < FIELD_WIDTH; x++) {
-                    Tiles[x, y] = new Tile();
-                }
-            }
-
-            //Инициализирем черных
-            Tiles[0, 1].Checker = new Checker(CheckerColor.Black, 0, 1, Tiles, BlackCheckers);
-            Tiles[0, 3].Checker = new Checker(CheckerColor.Black, 0, 3, Tiles, BlackCheckers);
-            Tiles[0, 5].Checker = new Checker(CheckerColor.Black, 0, 5, Tiles, BlackCheckers);
-            Tiles[0, 7].Checker = new Checker(CheckerColor.Black, 0, 7, Tiles, BlackCheckers);
-            Tiles[1, 0].Checker = new Checker(CheckerColor.Black, 1, 0, Tiles, BlackCheckers);
-            Tiles[1, 2].Checker = new Checker(CheckerColor.Black, 1, 2, Tiles, BlackCheckers);
-            Tiles[1, 4].Checker = new Checker(CheckerColor.Black, 1, 4, Tiles, BlackCheckers);
-            Tiles[1, 6].Checker = new Checker(CheckerColor.Black, 1, 6, Tiles, BlackCheckers);
-            Tiles[2, 1].Checker = new Checker(CheckerColor.Black, 2, 1, Tiles, BlackCheckers);
-            Tiles[2, 3].Checker = new Checker(CheckerColor.Black, 2, 3, Tiles, BlackCheckers);
-            Tiles[2, 5].Checker = new Checker(CheckerColor.Black, 2, 5, Tiles, BlackCheckers);
-            Tiles[2, 7].Checker = new Checker(CheckerColor.Black, 2, 7, Tiles, BlackCheckers);
-
-            //Инициализирем белых
-            Tiles[5, 0].Checker = new Checker(CheckerColor.White, 5, 0, Tiles, WhiteCheckers);
-            Tiles[5, 2].Checker = new Checker(CheckerColor.White, 5, 2, Tiles, WhiteCheckers);
-            Tiles[5, 4].Checker = new Checker(CheckerColor.White, 5, 4, Tiles, WhiteCheckers);
-            Tiles[5, 6].Checker = new Checker(CheckerColor.White, 5, 6, Tiles, WhiteCheckers);
-            Tiles[6, 1].Checker = new Checker(CheckerColor.White, 6, 1, Tiles, WhiteCheckers);
-            Tiles[6, 3].Checker = new Checker(CheckerColor.White, 6, 3, Tiles, WhiteCheckers);
-            Tiles[6, 5].Checker = new Checker(CheckerColor.White, 6, 5, Tiles, WhiteCheckers);
-            Tiles[6, 7].Checker = new Checker(CheckerColor.White, 6, 7, Tiles, WhiteCheckers);
-            Tiles[7, 0].Checker = new Checker(CheckerColor.White, 7, 0, Tiles, WhiteCheckers);
-            Tiles[7, 2].Checker = new Checker(CheckerColor.White, 7, 2, Tiles, WhiteCheckers);
-            Tiles[7, 4].Checker = new Checker(CheckerColor.White, 7, 4, Tiles, WhiteCheckers);
-            Tiles[7, 6].Checker = new Checker(CheckerColor.White, 7, 6, Tiles, WhiteCheckers);
-
-            for (int y = 0; y < FIELD_HEIGHT; y++) {
-                for (int x = 0; x < FIELD_WIDTH; x++) {
-                    if (Tiles[x, y].IsContainsChecker) {
-                        if (Tiles[x, y].Checker.Color == CheckerColor.White) {
-                            WhiteCheckers.Add(Tiles[x, y].Checker);
-                        }
-                        else {
-                            BlackCheckers.Add(Tiles[x, y].Checker);
-                        }
-                    }
-                }
-            }
+            Board = new Board(this);          
         }
 
         #endregion Class designer
@@ -124,10 +76,12 @@ namespace Checkers.BL.Model {
          */
 
         public void Move(Checker checker, int row, int column) {
+            if (checker == null) return;
             if (checker.Color == CurrentStepColor) {
                 var result = SelectedChecker.TryToMove(row, column);
+
                 if (result == MovesType.Attack) {
-                    if (!checker.CanEat()) {
+                    if (!checker.CanEat().res) {
                         CurrentStepColor = checker.Color == CheckerColor.White ? CheckerColor.Black : CheckerColor.White;
                     }
                     else {
@@ -138,9 +92,20 @@ namespace Checkers.BL.Model {
                     CurrentStepColor = checker.Color == CheckerColor.White ? CheckerColor.Black : CheckerColor.White;
                 }
                 if (result != MovesType.None) {
-                    SelectedChecker = (Checker)Tiles[row, column].Checker.Clone();
+                    SelectedChecker = Board.Tiles[row, column].Checker;
                     FieldUpdated?.Invoke();
                 }
+            }
+        }
+
+        public void AddChecker(Checker checker) {
+            switch (checker.Color) {
+                case CheckerColor.Black:
+                    BlackCheckers.Add(checker);
+                break;
+                case CheckerColor.White:
+                    WhiteCheckers.Add(checker);
+                break;
             }
         }
 

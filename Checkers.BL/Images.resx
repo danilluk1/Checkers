@@ -121,7 +121,13 @@
   <data name="blackchecker" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\bss.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="blackqueen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\png-transparent-chess-piece-queen-king-pin-chess-king-hand-pin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="whitechecker" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\whitechecker.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="whitequeen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\png-transparent-chess-piece-xiangqi-queen-king-chess-king-pin-queen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
