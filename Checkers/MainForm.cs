@@ -29,7 +29,6 @@ namespace Checkers {
                         Tag = y + "" + x
                     };
                     field[y, x].MouseDown += Tile_Click;
-                    field[y, x].MouseDoubleClick += Tile_MouseDoubleClick;
                     Controls.Add(field[y, x]);
                 }
                 if (y % 2 == 0) {
@@ -67,11 +66,6 @@ namespace Checkers {
             game.FieldUpdated += UpdateView;
         }
 
-
-        private void Tile_MouseDoubleClick(object sender, MouseEventArgs e) {
-        }
-
-
         private void Tile_Click(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 if (game.SelectedChecker == null) {
@@ -90,6 +84,7 @@ namespace Checkers {
                     int row = Convert.ToInt32(cords[0].ToString());
                     int column = Convert.ToInt32(cords[1].ToString());
                     game.Move(game.SelectedChecker, row, column);
+                    UpdateView();
                     ShowVariants(game.SelectedChecker);
                     game.SelectedChecker = null;
                 }
@@ -136,11 +131,11 @@ namespace Checkers {
         }
 
         private void ShowVariants(Checker checker) {
-            List<Tile> tiles = game.SelectedChecker?.CountCheckerAbleTiles();
+            List<Move> tiles = game.SelectedChecker?.CountCheckerAbleMoves();
             if (tiles != null) {
                 for (int i = 0; i < tiles.Count; i++) {
                     if (checker.Color == game.CurrentStepColor) {
-                        field[tiles[i].Row, tiles[i].Column].BackColor = Color.Red;
+                        field[tiles[i].MoveTile.Row, tiles[i].MoveTile.Column].BackColor = Color.Red;
                     }
                 }
             }

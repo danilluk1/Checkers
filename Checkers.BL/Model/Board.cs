@@ -31,6 +31,26 @@ namespace Checkers.BL.Model {
             }
         }
 
+        public Tile this[Checker checker] {
+            get {
+                return Tiles[checker.Row, checker.Column];
+            }
+
+            set {
+                Tiles[checker.Row, checker.Column] = value;
+            }
+        }
+
+        public Tile this[Tile tile] {
+            get {
+                return Tiles[tile.Row, tile.Column];
+            }
+
+            set {
+                Tiles[tile.Row, tile.Column] = value;
+            }
+        }
+
         private void Init() {
             //Заполняем поле.
             for (int y = 0; y < FIELD_HEIGHT; y++) {
@@ -76,5 +96,6 @@ namespace Checkers.BL.Model {
                 }
             }
         }
+       
     }
 }

@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Checkers.BL.Model {
-    public interface IDirection {
-        int RowIndex {get; set;}
-        int ColumnIndex { get; set; }
+    interface IConvertableChecker {
+        bool IsNeedToBeQueen();
     }
 }

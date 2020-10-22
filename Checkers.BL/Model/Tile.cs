@@ -16,12 +16,8 @@ namespace Checkers.BL.Model {
                 return checker;
             } 
             set {
-                if (checker != null) {
                     checker = value;
-                    checker.Row = Row;
-                    checker.Column = Column;
                     IsContainsChecker = checker == null ? false : true;
-                }
             }
         }
 

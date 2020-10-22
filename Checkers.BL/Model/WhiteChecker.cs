@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Checkers.BL.Model {
-    public class WhiteChecker : Checker {
+    public class WhiteChecker : Checker, IConvertableChecker {
 
         public Direction[] MoveDirections { get; } = {
             new Direction.UpperLeft(),
@@ -51,13 +51,10 @@ namespace Checkers.BL.Model {
         }
 
         public override MovesType TryToMove(int row, int column) {
-            //Проверям условие, так как иначе нет смысла выполнять эту функцию.
+
             if (row < Game.FIELD_HEIGHT && column < Game.FIELD_WIDTH) {
 
-                List<Tile> tiles = CountCheckerAbleTiles();
-                if (!tiles.Contains(Game.Board[row, column])) {
-                    return MovesType.None;
-                }
+                List<Move> moves = CountCheckerAbleMoves();
 
                 //Устанавливаем направление хода.
                 Direction direction = CountMoveDirection(row, column);
@@ -65,47 +62,55 @@ namespace Checkers.BL.Model {
                 //Получаем тип хода
                 var moveType = CountMoveType(row, column);
 
-                if (moveType == MovesType.Attack) {
-                    int c;
-                    int r;
+                var move = moves.FirstOrDefault(t => t.MoveTile.Equals(Game.Board[row, column]));
 
-                    r = Row + direction.RowIndex;
-                    c = Column + direction.ColumnIndex;
+                if (move == default) return MovesType.None;
 
-                    Game.BlackCheckers.Remove(Game.Board[r, c].Checker);
-                    Game.Board[r, c].Checker = null;
+                if (move.AttackedChecker != null) {
+                    Game.BlackCheckers.Remove(move.AttackedChecker);
+                    Game.Board[move.AttackedChecker].Checker = null;
                 }
                 else {
-
+                    //Дополнительная подготовка не нужна.
                 }
 
                 //Так как ход уже совешен, мы можем установить текущей клетке поле ContainsChecker = false
                 Game.Board[Row, Column].IsContainsChecker = false;
 
-                //Устанавливаем в клетку, в которую совершается ход нашу шашку.
-                Game.Board[row, column].Checker = this;
+                //Устанавливаем шашке, новое положение на поле.
+                Column = column;
+                Row = row;
+
+                if (IsNeedToBeQueen()) {
+                    Game.Board[this].Checker = new WhiteQueen(this);
+                }
+                else {
+
+                    Game.Board[move.MoveTile].Checker = this;
+                }
 
                 return moveType;
+
             }
-            return MovesType.None;
+            return MovesType.None;           
         }
         /*
          * Проходим от положения шашки циклом в 4 стороны и смотрим, существует ли взоможность съесть
          * */
-        public override (bool res, List<Tile> attackTiles) CanEat() {
-            List<Tile> attackTiles = new List<Tile>();
+        public override (bool res, List<Move> moves) CanEat() {
+            List<Move> _moves = new List<Move>();
             for(int i = 0; i < AttackDirections.Length; i++) {
                 List<Tile> tiles = AttackDirections[i].GetDiagonal(this, Game.Board);
                 if (tiles.Count > 2) {
-                        if (tiles[1].IsContainsChecker && tiles[1].Checker.Color != Color) {
-                            if (!tiles[2].IsContainsChecker) {
-                                attackTiles.Add(tiles[2]);
+                        if (tiles[Game.DEFAULT_STEP].IsContainsChecker && tiles[Game.DEFAULT_STEP].Checker.Color != Color) {
+                            if (!tiles[Game.ATTACK_DEFAULT_STEP].IsContainsChecker) {
+                                _moves.Add(new Move(tiles[Game.ATTACK_DEFAULT_STEP], tiles[Game.DEFAULT_STEP].Checker));
                             }
                         }
                 }
             }
-            if (attackTiles.Any()) {
-                return (true, attackTiles);
+            if (_moves.Any()) {
+                return (true, _moves);
             }
             else {
                 return (false, null);
@@ -113,17 +118,17 @@ namespace Checkers.BL.Model {
                 
         }
 
-        public override List<Tile> CountCheckerAbleTiles() {
-            List<Tile> result = new List<Tile>();
+        public override List<Move> CountCheckerAbleMoves() {
+            List<Move> result = new List<Move>();
             var (canEat, attackTiles) = CanEat();
             if (!canEat && !IsWhitesMustAttack()) {
                 for (int i = 0; i < MoveDirections.Length; i++) {
                     List<Tile> tiles = MoveDirections[i].GetDiagonal(this, Game.Board);
                     if (tiles.Count > 1) {
                         for (int j = 0; j < tiles.Count; j++) {
-                            if (!tiles[1].IsContainsChecker) {
+                            if (!tiles[Game.DEFAULT_STEP].IsContainsChecker) {
 
-                                result.Add(tiles[1]);
+                                result.Add(new Move(tiles[1]));
                             }
                         }
                     }
@@ -147,5 +152,11 @@ namespace Checkers.BL.Model {
             }
             return false;
         }
+
+        public bool IsNeedToBeQueen() {
+            return Row == 0;
+        }
+
+
     }
 }

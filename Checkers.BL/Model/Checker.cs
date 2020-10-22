@@ -64,8 +64,8 @@ namespace Checkers.BL.Model {
 
         public abstract MovesType TryToMove(int row, int column);
 
-        public abstract (bool res, List<Tile> attackTiles) CanEat();
-        public abstract List<Tile> CountCheckerAbleTiles();
+        public abstract (bool res, List<Move> moves) CanEat();
+        public abstract List<Move> CountCheckerAbleMoves();
 
         public override bool Equals(Object obj) {
             //Check for null and compare run-time types.
